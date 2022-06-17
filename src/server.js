@@ -26,8 +26,8 @@ server.start().then(() => {
 
   app.use(bodyParser.json(), bodyParser.urlencoded({ extended: true }));
   app.use(express.static("public"));
-  app.use('/',(res,req)=>{
-    res.sendFile(path.join(__dirname+'./views/index.html'))
+  app.use('/',(req,res)=>{
+    res.sendFile('views/index.html', {root: __dirname })
   })
 
   connectDB().then(() => {
