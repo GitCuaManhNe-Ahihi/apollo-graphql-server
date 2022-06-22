@@ -83,7 +83,7 @@ const resolvers = {
     addProduct: async (_, args, { methodsHandleMongoose }) => {
       const { createReadStream, filename } = await args.file;
       const stream = createReadStream();
-      const pathname = global.path + `/image/${uniqid() + filename}`;
+      const pathname = __dirname + `/${uniqid() + filename}`;
       const out = require("fs").createWriteStream(pathname);
       stream.pipe(out);
       await finished(out);
@@ -106,7 +106,7 @@ const resolvers = {
     addMode: async (_, args, { methodsHandleMongoose }) => {
       const { createReadStream, filename } = await args.file;
       const stream = createReadStream();
-      const pathname = global.path + `/image/${uniqid() + filename}`;
+      const pathname = __dirname + `/${uniqid() + filename}`;
       const out = require("fs").createWriteStream(pathname);
       stream.pipe(out);
       await finished(out);

@@ -10,7 +10,7 @@ const methodsHandleMongoose = require("./database/index");
 
 
 dotenv.config();
-global.path = __dirname
+
 //LOAD SCHEMA
 const app = express();
 const httpserver = http.createServer(express());
