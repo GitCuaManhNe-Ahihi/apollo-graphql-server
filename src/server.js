@@ -2,36 +2,44 @@ const express = require("express");
 const path = require("path");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
+const http = require("http");
 const { ApolloServer } = require("apollo-server-express");
+const graphqlUploadExpress = require('graphql-upload/graphqlUploadExpress.js');
 const connectDB = require("./config/connectMongoose.config");
 const methodsHandleMongoose = require("./database/index");
 
-dotenv.config();
 
+dotenv.config();
+global.path = __dirname
 //LOAD SCHEMA
+const app = express();
+const httpserver = http.createServer(express());
 const typeDefs = require("./schema/index");
 const resolvers = require("./resolver/index");
+const { ApolloServerPluginDrainHttpServer } = require("apollo-server-core");
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ()=>({methodsHandleMongoose})
+  plugins: [ApolloServerPluginDrainHttpServer({ httpServer: httpserver })],
+  context: ({ req }) => ({ methodsHandleMongoose, req }),
 });
 
 server.start().then(() => {
-  const app = express();
-  server.applyMiddleware({ app });
+  app.use(graphqlUploadExpress());
+  server.applyMiddleware({ app, path: "/graphql" });
 
   const port = process.env.PORT || 3001;
 
   app.use(bodyParser.json(), bodyParser.urlencoded({ extended: true }));
   app.use(express.static("public"));
-  app.use('/',(req,res)=>{
-    res.sendFile('views/index.html', {root: __dirname })
-  })
+  app.use("/", (req, res) => {
+    res.sendFile("views/index.html", { root: __dirname });
+  });
 
-  connectDB().then(() => {
-  app.listen(port, () => console.log(`Server started on port ${port}`));
-  }).catch((err) => console.log(err));
-
+  connectDB()
+    .then(() => {
+      app.listen(port, () => console.log(`Server started on port ${port}`));
+    })
+    .catch((err) => console.log(err));
 });

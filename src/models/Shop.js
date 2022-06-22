@@ -9,9 +9,14 @@ const ShopSchema = new Schema({
   description:{
     type: String,
   },
-  image: {
+  email: {
     type: String,
-    required: true,
+  },
+  phonenumber: {
+    type: String,
+  },
+  address:{
+    type:String,
   },
   userId:{
     type: Schema.Types.ObjectId
